@@ -35,6 +35,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+OPENAI_API_BASE = os.environ.get("OPENAI_API_BASE")
 SMART_LLM = os.environ.get("SMART_LLM")
 IS_LOCAL_SETUP = True if SMART_LLM.startswith("ollama") else False
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES"))
@@ -433,7 +434,7 @@ def save_user_extension_documents(data: RetrivedDocList, db: Session = Depends(g
         if IS_LOCAL_SETUP == True:
             index = HIndices(username=username)
         else:
-            index = HIndices(username=username, api_key=OPENAI_API_KEY)
+            index = HIndices(username=username, api_key=OPENAI_API_KEY, base_url=OPENAI_API_BASE)
 
         # Save indices in vector stores
         index.encode_docs_hierarchical(
@@ -519,7 +520,7 @@ def save_user_documents(files: list[UploadFile], token: str = Depends(oauth2_sch
         if IS_LOCAL_SETUP == True:
             index = HIndices(username=username)
         else:
-            index = HIndices(username=username, api_key=OPENAI_API_KEY)
+            index = HIndices(username=username, api_key=OPENAI_API_KEY, base_url=OPENAI_API_BASE)
 
         # Save indices in vector stores
         index.encode_docs_hierarchical(documents=raw_documents, search_space_instance=search_space, files_type='OTHER', db=db)
@@ -578,7 +579,7 @@ async def searchspace_chat_websocket_endpoint(websocket: WebSocket, search_space
                     if(IS_LOCAL_SETUP == True):
                         index = HIndices(username=username)
                     else:
-                        index = HIndices(username=username,api_key=OPENAI_API_KEY)
+                        index = HIndices(username=username,api_key=OPENAI_API_KEY, base_url=OPENAI_API_BASE)
 
 
                     await index.ws_experimental_search(websocket=websocket, manager=manager, query=query, search_space=search_space.name, report_type=report_type,  report_source=report_source)
@@ -619,7 +620,7 @@ async def searchspace_chat_websocket_endpoint(websocket: WebSocket, search_space
                     if(IS_LOCAL_SETUP == True):
                         llm = OllamaLLM(model=MODEL_NAME,temperature=0)
                     else:
-                        llm = ChatOpenAI(temperature=0, model_name=MODEL_NAME, api_key=OPENAI_API_KEY)
+                        llm = ChatOpenAI(temperature=0, model_name=MODEL_NAME, api_key=OPENAI_API_KEY, base_url=OPENAI_API_BASE)
 
                     descriptionchain = qa_prompt | llm
                     
@@ -861,7 +862,7 @@ def delete_all_related_data(search_space_id: int, data: DocumentsToDelete, db: S
         if IS_LOCAL_SETUP:
             index = HIndices(username=username)
         else:
-            index = HIndices(username=username, api_key=OPENAI_API_KEY)
+            index = HIndices(username=username, api_key=OPENAI_API_KEY, base_url=OPENAI_API_BASE)
 
         message = index.delete_vector_stores(summary_ids_to_delete=data.ids_to_delete, db=db, search_space=search_space.name)
 
