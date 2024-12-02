@@ -34,7 +34,7 @@ services:
     build:
       context: ./SurfSense-Frontend
     ports:
-      - "3000:3000"
+      - "3002:3000"
     env_file:
       - ./SurfSense-Frontend/.env
     networks:
