@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # PostgreSQL Database
   db:
     image: postgres:13
     environment:
@@ -11,40 +10,36 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5432"  # Динамический порт
     networks:
       - surfsense-network
 
-  # Backend Service (FastAPI)
   backend:
     build:
       context: ./backend
     ports:
-      - "8000:8000"
+      - "8000"  # Динамический порт
     env_file:
       - ./backend/.env
     depends_on:
       - db
-    privileged: true #when backend is pointing to the hostmaschine with localhost or 127.0.0.1 you need to add privileged: true else the container points at itself
+    privileged: true
     networks:
       - surfsense-network
 
-  # Frontend Service (Next.js)
   frontend:
     build:
       context: ./SurfSense-Frontend
     ports:
-      - "3000:3000"
+      - "3000"  # Динамический порт
     env_file:
       - ./SurfSense-Frontend/.env
     networks:
       - surfsense-network
 
-# Volumes for persistent storage
 volumes:
   postgres_data:
 
-# Docker network
 networks:
   surfsense-network:
     driver: bridge
