@@ -20,7 +20,7 @@ services:
     build:
       context: ./backend
     ports:
-      - "8002:8000"
+      - "8000:8000"
     env_file:
       - ./backend/.env
     depends_on:
@@ -34,7 +34,7 @@ services:
     build:
       context: ./SurfSense-Frontend
     ports:
-      - "3002:3000"
+      - "3000:3000"
     env_file:
       - ./SurfSense-Frontend/.env
     networks:
